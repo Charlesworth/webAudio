@@ -15,30 +15,26 @@
 
     var context = new AudioContext();
 
+    var gain = context.createGain()
+    gain.gain.setValueAtTime(0.2, context.currentTime);
+    gain.connect(context.destination)
+
     var oscillator = context.createOscillator();
     oscillator.type = 'square';
     oscillator.frequency.setValueAtTime(440, context.currentTime); // value in hertz
     oscillator.start();
     
-
     button.addEventListener("mousedown", function(){
-      oscillator.connect(context.destination); 
+      oscillator.connect(gain); 
     });
 
     button.addEventListener("mouseup", function() {
-      oscillator.disconnect(context.destination)
+      oscillator.disconnect(gain)
     });
 
     playButton.addEventListener("mousedown", function(){
-      newCodedOscillator([1,4,7,4]);
+      newCodedOscillator([5,7,1,3,9]);
     });
-
-    // var myVar = setInterval(myTimer, 1000);
-
-    // function myTimer() {
-    //   console.log("hi")
-    //   oscillator.frequency.value = oscillator.frequency.value + 100;
-    // }
 
     function newOscillator() {
       var oscillator = context.createOscillator();
@@ -47,7 +43,7 @@
       oscillator.frequency.setValueAtTime(440 * Math.pow(2, 1/12), context.currentTime + 1);
       oscillator.frequency.setValueAtTime(440 * Math.pow(2, 2/12), context.currentTime + 2);
       oscillator.frequency.setValueAtTime(440 * Math.pow(2, 3/12), context.currentTime + 3);
-      oscillator.connect(context.destination); 
+      oscillator.connect(gain); 
       oscillator.start();
       oscillator.stop(context.currentTime + 4);
     }
@@ -58,7 +54,7 @@
       for (i = 0; i < intCodes.length; i++) {
         oscillator.frequency.setValueAtTime(440 * Math.pow(2, intCodes[i]/12), context.currentTime + i);
       }
-      oscillator.connect(context.destination); 
+      oscillator.connect(gain); 
       oscillator.start();
       oscillator.stop(context.currentTime + intCodes.length+1);
     }
