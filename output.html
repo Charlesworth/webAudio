@@ -1,0 +1,73 @@
+<html>
+<header>
+  <title>Audio</title>
+</header>
+
+<body>
+  <h1>audio experiment</h1>
+
+  <button id="listenButton">listen</button>
+  <button id="playButton">play</button>
+
+  <script>
+    var button = document.getElementById('listenButton');
+    var playButton = document.getElementById('playButton');
+
+    var context = new AudioContext();
+
+    var oscillator = context.createOscillator();
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(440, context.currentTime); // value in hertz
+    oscillator.start();
+    
+
+    button.addEventListener("mousedown", function(){
+      oscillator.connect(context.destination); 
+    });
+
+    button.addEventListener("mouseup", function() {
+      oscillator.disconnect(context.destination)
+    });
+
+    playButton.addEventListener("mousedown", function(){
+      newCodedOscillator([1,4,7,4]);
+    });
+
+    // var myVar = setInterval(myTimer, 1000);
+
+    // function myTimer() {
+    //   console.log("hi")
+    //   oscillator.frequency.value = oscillator.frequency.value + 100;
+    // }
+
+    function newOscillator() {
+      var oscillator = context.createOscillator();
+      oscillator.type = 'square';
+      oscillator.frequency.setValueAtTime(440, context.currentTime); // value in hertz
+      oscillator.frequency.setValueAtTime(440 * Math.pow(2, 1/12), context.currentTime + 1);
+      oscillator.frequency.setValueAtTime(440 * Math.pow(2, 2/12), context.currentTime + 2);
+      oscillator.frequency.setValueAtTime(440 * Math.pow(2, 3/12), context.currentTime + 3);
+      oscillator.connect(context.destination); 
+      oscillator.start();
+      oscillator.stop(context.currentTime + 4);
+    }
+
+    function newCodedOscillator(intCodes) {
+      var oscillator = context.createOscillator();
+      oscillator.type = 'square';
+      for (i = 0; i < intCodes.length; i++) {
+        oscillator.frequency.setValueAtTime(440 * Math.pow(2, intCodes[i]/12), context.currentTime + i);
+      }
+      oscillator.connect(context.destination); 
+      oscillator.start();
+      oscillator.stop(context.currentTime + intCodes.length+1);
+    }
+
+
+
+  </script>
+
+
+</body>
+
+</html>

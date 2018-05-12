@@ -32,18 +32,26 @@
 
       var processor = context.createScriptProcessor(1024, 1, 1);
 
+      var analyser = context.createAnalyser();
+      analyser.fftSize = 2048;
+      var bufferLength = analyser.frequencyBinCount;
+      var dataArray = new Uint8Array(bufferLength);
 
       source.connect(processor);
-      processor.connect(delay);
+      processor.connect(analyser);
+      analyser.connect(delay);
+      
       delay.connect(context.destination);
-
 
       processor.onaudioprocess = function (audioProcessingEvent) {
         if (paused) {
           return;
         }
 
-        console.log(audioProcessingEvent.inputBuffer);
+        // console.log(audioProcessingEvent.inputBuffer);
+        // analyser.getByteFrequencyData(dataArray);
+        analyser.getByteTimeDomainData(dataArray);
+        console.log(dataArray[0]);
 
         // The input buffer is the song we loaded earlier
         var inputBuffer = audioProcessingEvent.inputBuffer;
@@ -71,6 +79,7 @@
         video: false
       })
       .then(outputAudio);
+
   </script>
 
 
