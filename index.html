@@ -4,35 +4,66 @@
 </header>
 
 <body>
-  Hello world
+  <h1>audio experiment</h1>
 
-  <audio id="player" controls></audio>
+  <button id="listenButton">listen</button>
+
+  <!-- <audio id="player" controls></audio> -->
   <script>
-    var player = document.getElementById('player');
+    // var player = document.getElementById('player');
+    var paused = true;
 
-    var handleSuccess = function (stream) {
-      var context = new AudioContext();
-      var source = context.createMediaStreamSource(stream);
-      var processor = context.createScriptProcessor(1024, 1, 1);
+    var button = document.getElementById('listenButton');
 
-      source.connect(processor);
-      processor.connect(context.destination);
+    button.addEventListener("mousedown", function(){
+        paused = false;
+    });
 
-      processor.onaudioprocess = function (e) {
-        // Do something with the data, i.e Convert this to WAV
-        
-        console.log(e.inputBuffer);
-
-      };
-
-    };
+    button.addEventListener("mouseup", function() {
+        paused = true;
+    });
 
     var outputAudio = function (stream) {
       var context = new AudioContext();
       var source = context.createMediaStreamSource(stream);
-      // var processor = context.createScriptProcessor(1024, 1, 1);
 
-      source.connect(context.destination);
+      var delay = context.createDelay();
+      delay.delayTime.value = 1;
+
+      var processor = context.createScriptProcessor(1024, 1, 1);
+
+
+      source.connect(processor);
+      processor.connect(delay);
+      delay.connect(context.destination);
+
+
+      processor.onaudioprocess = function (audioProcessingEvent) {
+        if (paused) {
+          return;
+        }
+
+        console.log(audioProcessingEvent.inputBuffer);
+
+        // The input buffer is the song we loaded earlier
+        var inputBuffer = audioProcessingEvent.inputBuffer;
+
+        // The output buffer contains the samples that will be modified and played
+        var outputBuffer = audioProcessingEvent.outputBuffer;
+
+        var inputData = inputBuffer.getChannelData(0);
+        var outputData = outputBuffer.getChannelData(0);
+
+        // Loop through the samples
+        for (var sample = 0; sample < inputBuffer.length; sample++) {
+          // make output equal to the same as the input
+          outputData[sample] = inputData[sample];
+
+          // add noise to each output sample
+          // outputData[sample] += ((Math.random() * 2) - 1) * 0.2;         
+        }
+      };
+
     };
 
     navigator.mediaDevices.getUserMedia({
@@ -40,7 +71,6 @@
         video: false
       })
       .then(outputAudio);
-      // .then(handleSuccess);
   </script>
 
 
