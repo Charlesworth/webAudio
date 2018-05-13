@@ -9,9 +9,12 @@
   <button id="listenButton">listen</button>
   <button id="playButton">play</button>
 
+  <input id="number" type="number" value="440" step="10">
+
   <script>
     var button = document.getElementById('listenButton');
     var playButton = document.getElementById('playButton');
+    var number = document.getElementById('number');
 
     var context = new AudioContext();
 
@@ -25,6 +28,7 @@
     oscillator.start();
     
     button.addEventListener("mousedown", function(){
+      oscillator.frequency.setValueAtTime(number.value, context.currentTime); // value in hertz    
       oscillator.connect(gain); 
     });
 
@@ -58,9 +62,6 @@
       oscillator.start();
       oscillator.stop(context.currentTime + intCodes.length+1);
     }
-
-
-
   </script>
 
 
