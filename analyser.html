@@ -1,0 +1,72 @@
+<html>
+<header>
+  <title>Audio</title>
+</header>
+
+<body>
+  <h1>audio experiment</h1>
+
+  <canvas id="visualizer" width="640" height="100"></canvas>
+
+  <script>
+    var canvas = document.getElementById('visualizer');
+    var canvasCtx = canvas.getContext("2d");
+
+    var context = new AudioContext();
+
+    var analyser = context.createAnalyser();
+    analyser.fftSize = 512;
+    var bufferLength = analyser.frequencyBinCount;
+    var dataArray = new Uint8Array(bufferLength);
+
+    // https://stackoverflow.com/questions/14789283/what-does-the-fft-data-in-the-web-audio-api-correspond-to/14789992#14789992
+    console.log("buffer len:" + bufferLength);
+    console.log("samplerate:" + context.sampleRate)
+
+    navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+      })
+      .then(function (stream) {
+        var source = context.createMediaStreamSource(stream);
+        source.connect(analyser);
+      })
+
+    function visualize() {
+      WIDTH = canvas.width;
+      HEIGHT = canvas.height;
+
+
+      var draw = function () {
+        analyser.getByteFrequencyData(dataArray);
+
+        canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+        canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+        var barWidth = (WIDTH / bufferLength) * 2.5;
+        var barHeight;
+        var x = 0;
+
+        for (var i = 0; i < bufferLength; i++) {
+          barHeight = dataArray[i];
+
+          canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+          canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+
+          x += barWidth + 1;
+        }
+        window.requestAnimationFrame(draw);
+      };
+
+      window.requestAnimationFrame(draw);
+    };
+
+    visualize();
+  </script>
+
+
+</body>
+
+</html>
