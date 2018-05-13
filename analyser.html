@@ -5,13 +5,13 @@
 
 <body>
   <h1>audio experiment</h1>
-
+  
   <canvas id="visualizer" width="640" height="100"></canvas>
 
   <script>
     var canvas = document.getElementById('visualizer');
     var canvasCtx = canvas.getContext("2d");
-
+    
     var context = new AudioContext();
 
     var analyser = context.createAnalyser();
@@ -48,6 +48,9 @@
         var barWidth = (WIDTH / bufferLength) * 2.5;
         var barHeight;
         var x = 0;
+
+        var largestBucket = dataArray.indexOf(Math.max(...dataArray));
+        console.log(largestBucket * 86);
 
         for (var i = 0; i < bufferLength; i++) {
           barHeight = dataArray[i];
