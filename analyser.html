@@ -1,6 +1,7 @@
 <html>
 <header>
   <title>Audio</title>
+  <script type="text/javascript" src="analyserScript.js"></script>
 </header>
 
 <body>
@@ -49,8 +50,8 @@
         var barHeight;
         var x = 0;
 
-        var largestBucket = dataArray.indexOf(Math.max(...dataArray));
-        console.log(largestBucket * 86);
+        var largestBucket = getLargestBucket(dataArray);
+        console.log((largestBucket * 86) + " to " + ((largestBucket + 1) * 86));
 
         for (var i = 0; i < bufferLength; i++) {
           barHeight = dataArray[i];
