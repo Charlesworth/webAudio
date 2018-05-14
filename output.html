@@ -6,15 +6,42 @@
 <body>
   <h1>audio experiment</h1>
 
-  <button id="listenButton">listen</button>
-  <button id="playButton">play</button>
+  <button id="toneButton">play tone</button>
+  <input id="toneInput" type="number" value="440" step="10">
 
-  <input id="number" type="number" value="440" step="10">
+  </br>
+  </br>
+
+  <button id="playButton">play tune</button>
+
+  </br>
+  </br>
+
+  <button id="encodeButton">play encoded sequence</button>
+  <input id="encodeInput0" type="number" value="1" min="0" max="9">
+  <input id="encodeInput1" type="number" value="1" min="0" max="9">
+  <input id="encodeInput2" type="number" value="1" min="0" max="9">
+  <input id="encodeInput3" type="number" value="1" min="0" max="9">
+  <input id="encodeInput4" type="number" value="1" min="0" max="9">
+  <input id="encodeInput5" type="number" value="1" min="0" max="9">
+  <input id="encodeInput6" type="number" value="1" min="0" max="9">
+  <input id="encodeInput7" type="number" value="1" min="0" max="9">
 
   <script>
-    var button = document.getElementById('listenButton');
+    var toneButton = document.getElementById('toneButton');
+    var toneInput = document.getElementById('toneInput');
+
     var playButton = document.getElementById('playButton');
-    var number = document.getElementById('number');
+    
+    var encodeButton = document.getElementById('encodeButton');
+    var encodeInput0 = document.getElementById('encodeInput0');
+    var encodeInput1 = document.getElementById('encodeInput1');
+    var encodeInput2 = document.getElementById('encodeInput2');
+    var encodeInput3 = document.getElementById('encodeInput3');
+    var encodeInput4 = document.getElementById('encodeInput4');
+    var encodeInput5 = document.getElementById('encodeInput5');
+    var encodeInput6 = document.getElementById('encodeInput6');
+    var encodeInput7 = document.getElementById('encodeInput7');
 
     var context = new AudioContext();
 
@@ -27,17 +54,30 @@
     oscillator.frequency.setValueAtTime(440, context.currentTime); // value in hertz
     oscillator.start();
     
-    button.addEventListener("mousedown", function(){
-      oscillator.frequency.setValueAtTime(number.value, context.currentTime); // value in hertz    
+    playButton.addEventListener("mousedown", function(){
+      newCodedOscillator([5,7,1,3,9]);
+    });
+
+    toneButton.addEventListener("mousedown", function(){
+      oscillator.frequency.setValueAtTime(toneInput.value, context.currentTime); // value in hertz    
       oscillator.connect(gain); 
     });
 
-    button.addEventListener("mouseup", function() {
+    toneButton.addEventListener("mouseup", function() {
       oscillator.disconnect(gain)
     });
 
-    playButton.addEventListener("mousedown", function(){
-      newCodedOscillator([5,7,1,3,9]);
+    encodeButton.addEventListener("mousedown", function(){
+      newCodedOscillator([
+        encodeInput0.value,
+        encodeInput1.value,
+        encodeInput2.value,
+        encodeInput3.value,
+        encodeInput4.value,
+        encodeInput5.value,
+        encodeInput6.value,
+        encodeInput7.value
+      ]);
     });
 
     function newOscillator() {
@@ -56,11 +96,12 @@
       var oscillator = context.createOscillator();
       oscillator.type = 'square';
       for (i = 0; i < intCodes.length; i++) {
-        oscillator.frequency.setValueAtTime(440 * Math.pow(2, intCodes[i]/12), context.currentTime + i);
+        // oscillator.frequency.setValueAtTime(440 * Math.pow(2, (intCodes[i]+1)/12), context.currentTime + (i/2));
+        oscillator.frequency.setValueAtTime(600 + (100 * (intCodes[i]+1)), context.currentTime + (i/2));
       }
       oscillator.connect(gain); 
       oscillator.start();
-      oscillator.stop(context.currentTime + intCodes.length+1);
+      oscillator.stop(context.currentTime + (intCodes.length+1)/2);
     }
   </script>
 
